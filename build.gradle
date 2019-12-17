@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+group 'io.github.daruma256'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
+processResources {
+    filteringCharset = 'UTF-8'
+}
+
+dependencies {
+    embed 'com.google.code.gson:gson:2.8.6'
+    embed 'net.dv8tion:JDA:4.0.0_78'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.daruma256.AuctionBot'
+    }
+    from configurations.embed.findAll { !it.name.endsWith('pom') }.collect { it.isDirectory() ? it : zipTree(it) }
+}
