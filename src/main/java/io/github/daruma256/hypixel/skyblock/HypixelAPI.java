@@ -3,27 +3,33 @@ package io.github.daruma256.hypixel.skyblock;
 import com.google.gson.Gson;
 import io.github.daruma256.config.Config;
 import io.github.daruma256.discordapp.DiscordBot;
-import io.github.daruma256.hypixel.skyblock.enchantment.SBEnchantment;
 import io.github.daruma256.hypixel.skyblock.format.AuctionFormat;
 import io.github.daruma256.hypixel.skyblock.format.RequestFormat;
+import io.github.daruma256.hypixel.skyblock.item.SearchingDataHolder;
+import io.github.daruma256.hypixel.skyblock.item.SearchingItem;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class HypixelAPI {
     private static final String apiKey = Config.apiKey;
     private static final String baseLink = "https://api.hypixel.net/skyblock/auctions?key=" + apiKey + "&page=";
+    private static final ArrayList<String> setupItem = new ArrayList<>();
 
     public static void get() {
-        if (AOTDDataHolder.isEmpty()) {
-            setUp();
-            System.out.println("[Bot] new AOTD find Start...");
+        SearchingItem.addFromQue();
+        for (String item : SearchingItem.getList()) {
+            if (!SearchingDataHolder.containsKey(item)) {
+                setupItem.add(item);
+            }
         }
-        ArrayList<String> arrayList = new ArrayList<>();
+        if (SearchingItem.getList().isEmpty()) {
+            System.out.println("[Bot] find Item is't setting");
+            return;
+        }
         for (int i = 1;; i++){
             try {
                 InputStream inputStream = getAuctions(i);
@@ -36,14 +42,14 @@ public class HypixelAPI {
 
                 if (request.success.equals("true")) {
                     for (AuctionFormat auctionFormat : request.auctions) {
-                        if (auctionFormat.item_name.contains("Aspect of the Dragons")) {
-                            if (!AOTDDataHolder.contains(auctionFormat.uuid)) {
-                                if (!SBEnchantment.has(auctionFormat.item_lore)) {
-                                    System.out.println("[Bot] Find!");
+                        if (SearchingItem.getList().contains(auctionFormat.item_name)) {
+                            if (!setupItem.contains(auctionFormat.item_name)) {
+                                if (!SearchingDataHolder.contains(auctionFormat)) {
+                                    System.out.println("[Bot] " + auctionFormat.item_name + " Find!");
                                     DiscordBot.sendMessage(auctionFormat);
                                 }
                             }
-                            arrayList.add(auctionFormat.uuid);
+                            SearchingDataHolder.add(auctionFormat);
                         }
                     }
                 }
@@ -55,42 +61,10 @@ public class HypixelAPI {
                 e.printStackTrace();
             }
         }
-        AOTDDataHolder.set(arrayList);
-    }
-
-    private static void setUp() {
-        System.out.println("[Bot] SetUp started!");
-        ArrayList<String> arrayList = new ArrayList<>();
-        for (int i = 1;; i++){
-            try {
-                InputStream inputStream = getAuctions(i);
-                RequestFormat request = new Gson().fromJson(new InputStreamReader(inputStream), RequestFormat.class);
-                inputStream.close();
-                if (request.totalPages == 0) {
-                    break;
-                }
-
-                DecimalFormat format = new DecimalFormat("##00");
-                if (request.success.equals("true")) {
-                    for (AuctionFormat auctionFormat : request.auctions) {
-                        if (auctionFormat.item_name.contains("Aspect of the Dragons")) {
-                            arrayList.add(auctionFormat.uuid);
-                        }
-                    }
-                    System.out.println("[Bot] "  + format.format(i) + "Page Loaded");
-                } else {
-                    System.out.println("[Bot] Can't get Auction Data At Page: " + format.format(i) );
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                break;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        for (String string : setupItem) {
+            System.out.println("[Bot] " + SearchingDataHolder.getList(string).size() + " " +  string + " Find!");
         }
-        AOTDDataHolder.set(arrayList);
-        System.out.println("[Bot] SetUp success!");
-        System.out.println("[Bot] " + AOTDDataHolder.size() + "AOTD find.");
+        setupItem.clear();
     }
 
     private static InputStream getAuctions(Integer page) throws IOException {

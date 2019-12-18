@@ -9,4 +9,5 @@ public class AuctionFormat {
     public String item_lore;
     public long starting_bid;
     public String tier;
+    public boolean claimed;
 }
