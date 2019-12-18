@@ -28,16 +28,21 @@ public class AuctionBot {
         String text = scan.next();
 
         if (text.equals("stop")) {
-            System.out.println("[Bot] shutdown started...");
-            DiscordBot.stop();
             timer.cancel();
-            System.out.println("[Bot] - - - Credit - - -");
-            System.out.println("[Bot] API : Hypixel Network (https://api.hypixel.net)");
-            System.out.println("[Bot] API : DV8FromTheWorld (https://github.com/DV8FromTheWorld/JDA)");
-            System.out.println("[Bot] Coding : daruma_256 (https://github.com/daruma256)");
-            System.out.println("[Bot] - - - - - - - - -");
-            System.out.println("[Bot] Thank you for Using!");
-            System.exit(0);
+            stop();
         }
     }
+
+    public static void stop() {
+        System.out.println("[Bot] shutdown started...");
+        DiscordBot.stop();
+        System.out.println("[Bot] - - - Credit - - -");
+        System.out.println("[Bot] API : Hypixel Network (https://api.hypixel.net)");
+        System.out.println("[Bot] API : DV8FromTheWorld (https://github.com/DV8FromTheWorld/JDA)");
+        System.out.println("[Bot] Coding : daruma_256 (https://github.com/daruma256)");
+        System.out.println("[Bot] - - - - - - - - -");
+        System.out.println("[Bot] Thank you for Using!");
+        System.exit(0);
+    }
+
 }

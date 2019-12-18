@@ -1,5 +1,6 @@
 package io.github.daruma256.discordapp.command;
 
+import io.github.daruma256.AuctionBot;
 import io.github.daruma256.discordapp.DiscordBot;
 import io.github.daruma256.hypixel.skyblock.item.SearchingItem;
 
@@ -13,9 +14,9 @@ public class DiscordCommand {
                 String name = command.replace("!search remove ", "");
                 SearchingItem.remove(name);
             }
-        } else if (command.startsWith("!ping")) {
-            DiscordBot.sendMessage("pong!");
-            DiscordBot.loadConfigFromTopic();
+        } else if (command.startsWith("!stop")) {
+            DiscordBot.sendMessage("システムを停止します");
+            AuctionBot.stop();
         }
     }
 }

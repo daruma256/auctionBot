@@ -50,7 +50,7 @@ public class SearchingItem {
                 return;
             }
             que.add(itemName);
-            DiscordBot.addChannelTopic(itemName + "\n");
+            DiscordBot.addChannelTopic("\n" + itemName);
         }
     }
 
@@ -61,7 +61,7 @@ public class SearchingItem {
             }
             if (!list.contains(itemName)) {
                 que.add(itemName);
-                DiscordBot.addChannelTopic(itemName + "\n");
+                DiscordBot.addChannelTopic("\n" + itemName);
             }
         }
     }

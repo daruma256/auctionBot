@@ -147,7 +147,7 @@ public class DiscordBot {
             clearChannelTopic();
             return;
         }
-        String items = defaultTopic.replace("---Searching List---" + "\n", "");
+        String items = defaultTopic.replace("---Searching List---\n", "");
         if (items.isEmpty()) {
             return;
         }
