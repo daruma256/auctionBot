@@ -2,14 +2,15 @@ package io.github.daruma256.discordapp;
 
 import io.github.daruma256.config.Config;
 import io.github.daruma256.discordapp.listener.JDAListener;
+import io.github.daruma256.hypixel.skyblock.Tier;
 import io.github.daruma256.hypixel.skyblock.format.AuctionFormat;
 import io.github.daruma256.mojang.MojangAPI;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
 
@@ -26,10 +27,9 @@ public class DiscordBot {
     }
 
     public static void stop() {
+        assert jda != null;
         try {
             jda.shutdown();
-        } catch (NullPointerException e){
-            return;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,13 +45,19 @@ public class DiscordBot {
         }
     }
 
-    @NotNull
-    public static String formatAuction(@NotNull AuctionFormat format) {
-        String name = MojangAPI.getNameFromUUIDString(format.auctioneer);
-        assert name != null;
-        if (name.equals("Can't get UserName") || name.equals("Unknown Error")) {
-            return  "```new Auction!\nbut Can't get User name. sorry.```";
+    public static void sendMessage(AuctionFormat format) {
+        Guild guild = jda.getGuildById(Config.discordServerID);
+        assert guild != null : "Not Found Guild<" + Config.discordServerID + ">";
+        TextChannel channel = guild.getTextChannelById(Config.discordTextChannel);
+        assert channel != null : "Not Found TextChannel<" + Config.discordTextChannel + ">";
+
+        if (channel.canTalk()) {
+            String userName = MojangAPI.getNameFromUUIDString(format.auctioneer);
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("new " + format.item_name + "!");
+            builder.setDescription("/ah " + userName + "\n\nstarting bit: " + format.starting_bid);
+            builder.setColor(Tier.getColor(format.tier));
+            channel.sendMessage(builder.build()).queue();
         }
-        return  "```new Auction!\nby: " + name + "\nstarting bit: " + format.starting_bid + "\n/ah " + name + "```";
     }
  }

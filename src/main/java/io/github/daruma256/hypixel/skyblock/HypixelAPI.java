@@ -3,6 +3,7 @@ package io.github.daruma256.hypixel.skyblock;
 import com.google.gson.Gson;
 import io.github.daruma256.config.Config;
 import io.github.daruma256.discordapp.DiscordBot;
+import io.github.daruma256.hypixel.skyblock.enchantment.SBEnchantment;
 import io.github.daruma256.hypixel.skyblock.format.AuctionFormat;
 import io.github.daruma256.hypixel.skyblock.format.RequestFormat;
 
@@ -37,8 +38,10 @@ public class HypixelAPI {
                     for (AuctionFormat auctionFormat : request.auctions) {
                         if (auctionFormat.item_name.contains("Aspect of the Dragons")) {
                             if (!AOTDDataHolder.contains(auctionFormat.uuid)) {
-                                System.out.println("[Bot] Find!");
-                                DiscordBot.sendMessage(DiscordBot.formatAuction(auctionFormat));
+                                if (!SBEnchantment.has(auctionFormat.item_lore)) {
+                                    System.out.println("[Bot] Find!");
+                                    DiscordBot.sendMessage(auctionFormat);
+                                }
                             }
                             arrayList.add(auctionFormat.uuid);
                         }

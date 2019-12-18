@@ -8,6 +8,5 @@ public class AuctionFormat {
     public String item_name;
     public String item_lore;
     public long starting_bid;
-    public String item_bytes;
-    public double highest_bid_amount;
+    public String tier;
 }
