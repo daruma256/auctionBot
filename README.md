@@ -1,3 +1,6 @@
+# 使用は非推奨
+2020年に公式ドキュメントも(多分)ない中作ったもの。
+
 # auctionBot
 Hypixel SkyBlock Auction APIから新規出品された登録アイテム探す奴。新しいのを検知したらdiscordに通知する。
 
